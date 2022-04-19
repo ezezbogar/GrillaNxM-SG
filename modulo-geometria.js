@@ -29,14 +29,16 @@
 var superficie3D;
 var mallaDeTriangulos;
 
-var filas=1;
-var columnas=1;
+var filas=50;
+var columnas=50;
 
 
 function crearGeometria(){
-        
-
-    superficie3D=new Plano(3,3);
+    
+    // Uso "superficie3D" como la variable a modificar segun el objeto que se quiera ver
+    //superficie3D = new Plano(10,10);
+    superficie3D = new Esfera(3);
+    //superficie3D = new TuboSenoidal(2,6);
     mallaDeTriangulos=generarSuperficie(superficie3D,filas,columnas);
     
 }
@@ -54,6 +56,47 @@ function Plano(ancho,largo){
         var x=(u-0.5)*ancho;
         var z=(v-0.5)*largo;
         return [x,0,z];
+    }
+
+    this.getNormal=function(u,v){
+        return [0,1,0];
+    }
+
+    this.getCoordenadasTextura=function(u,v){
+        return [u,v];
+    }
+}
+
+function Esfera(radio){
+
+    this.getPosicion=function(u,v){
+
+        theta = u * 2 * Math.PI
+        phi = (2*v - 1) * Math.PI/2
+        var x = radio * Math.cos(phi) * Math.cos(theta)
+        var y = radio * Math.cos(phi) * Math.sin(theta)
+        var z = radio * Math.sin(phi)
+        return [x,y,z];
+    }
+
+    this.getNormal=function(u,v){
+        return [0,1,0];
+    }
+
+    this.getCoordenadasTextura=function(u,v){
+        return [u,v];
+    }
+}
+
+function TuboSenoidal(radio, altura){
+
+    this.getPosicion=function(u,v){
+
+        theta = u * 2 * Math.PI
+        var z = (v-0.5) * altura
+        var x = (radio + Math.sin(3*z)/radio) * Math.cos(theta)
+        var y = (radio + Math.sin(3*z)/radio) * Math.sin(theta)
+        return [x,y,z];
     }
 
     this.getNormal=function(u,v){
@@ -102,17 +145,21 @@ function generarSuperficie(superficie,filas,columnas){
 
     // Buffer de indices de los triángulos
     
-    //indexBuffer=[];  
-    indexBuffer=[0,1,2,2,1,3]; // Estos valores iniciales harcodeados solo dibujan 2 triangulos, REMOVER ESTA LINEA!
+    indexBuffer=[];  
+    //indexBuffer=[0,1,2,2,1,3]; // Estos valores iniciales harcodeados solo dibujan 2 triangulos, REMOVER ESTA LINEA!
 
     for (i=0; i < filas; i++) {
-        for (j=0; j < columnas; j++) {
-
+        for (j=0; j <= columnas; j++) {
             // completar la lógica necesaria para llenar el indexbuffer en funcion de filas y columnas
             // teniendo en cuenta que se va a dibujar todo el buffer con la primitiva "triangle_strip" 
-            
+            indexBuffer.push((columnas + 1) * i + j);
+            indexBuffer.push((columnas + 1) * (i+1) + j);
         }
+        // Estas 2 lineas estan de mas en la ultima iteracion
+        indexBuffer.push((columnas + 1) * (i + 2) - 1);
+        indexBuffer.push((columnas + 1) * (i + 1));
     }
+    console.log(indexBuffer);
 
     // Creación e Inicialización de los buffers
 
@@ -169,7 +216,7 @@ function dibujarMalla(mallaDeTriangulos){
         /*
             Aqui es necesario modificar la primitiva por triangle_strip
         */
-        gl.drawElements(gl.TRIANGLES, mallaDeTriangulos.webgl_index_buffer.numItems, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLE_STRIP, mallaDeTriangulos.webgl_index_buffer.numItems, gl.UNSIGNED_SHORT, 0);
     }
     
     if (modo!="smooth") {
