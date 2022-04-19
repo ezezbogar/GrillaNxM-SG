@@ -37,8 +37,8 @@ function crearGeometria(){
     
     // Uso "superficie3D" como la variable a modificar segun el objeto que se quiera ver
     //superficie3D = new Plano(10,10);
-    superficie3D = new Esfera(3);
-    //superficie3D = new TuboSenoidal(2,6);
+    //superficie3D = new Esfera(3);
+    superficie3D = new TuboSenoidal(2,6);
     mallaDeTriangulos=generarSuperficie(superficie3D,filas,columnas);
     
 }
@@ -80,7 +80,11 @@ function Esfera(radio){
     }
 
     this.getNormal=function(u,v){
-        return [0,1,0];
+        theta = u * 2 * Math.PI
+        phi = (2*v - 1) * Math.PI/2
+        return [Math.cos(theta) * Math.sin(phi),
+                Math.sin(theta) * Math.sin(phi),
+                Math.cos(phi)];
     }
 
     this.getCoordenadasTextura=function(u,v){
@@ -94,13 +98,13 @@ function TuboSenoidal(radio, altura){
 
         theta = u * 2 * Math.PI
         var z = (v-0.5) * altura
-        var x = (radio + Math.sin(3*z)/radio) * Math.cos(theta)
-        var y = (radio + Math.sin(3*z)/radio) * Math.sin(theta)
+        var x = (radio + Math.sin(4*z)/radio) * Math.cos(theta)
+        var y = (radio + Math.sin(4*z)/radio) * Math.sin(theta)
         return [x,y,z];
     }
 
     this.getNormal=function(u,v){
-        return [0,1,0];
+        return [Math.cos(theta), Math.sin(theta), 0];
     }
 
     this.getCoordenadasTextura=function(u,v){
