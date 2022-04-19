@@ -42,7 +42,7 @@ function crearGeometria(){
     } else if (figure_char == 'E') {
         superficie3D = new Esfera(3);
     } else if (figure_char == 'T') {
-        superficie3D = new TuboSenoidal(2,6);
+        superficie3D = new TuboSenoidal(2,6,0.5,1.5);
     }
     
     mallaDeTriangulos=generarSuperficie(superficie3D,filas,columnas);
@@ -98,14 +98,14 @@ function Esfera(radio){
     }
 }
 
-function TuboSenoidal(radio, altura){
+function TuboSenoidal(radio, altura, amplitud_onda, longitud_onda){
 
     this.getPosicion=function(u,v){
 
-        theta = u * 2 * Math.PI
-        var z = (v-0.5) * altura
-        var x = (radio + Math.sin(4*z)/radio) * Math.cos(theta)
-        var y = (radio + Math.sin(4*z)/radio) * Math.sin(theta)
+        theta = u * 2 * Math.PI;
+        var z = (v-0.5) * altura;
+        var x = (radio * Math.cos(theta) + amplitud_onda * Math.sin(z * 2 * Math.PI / longitud_onda) * Math.cos(theta));
+        var y = (radio * Math.sin(theta) + amplitud_onda * Math.sin(z * 2 * Math.PI / longitud_onda) * Math.sin(theta));
         return [x,y,z];
     }
 
