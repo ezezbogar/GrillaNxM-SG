@@ -32,13 +32,19 @@ var mallaDeTriangulos;
 var filas=50;
 var columnas=50;
 
+// Uso "figure_char" como la variable a modificar segun el objeto que se quiera ver ['P', 'E', 'T']
+var figure_char = 'T'
 
 function crearGeometria(){
+
+    if (figure_char == 'P') {
+        superficie3D = new Plano(10,10);
+    } else if (figure_char == 'E') {
+        superficie3D = new Esfera(3);
+    } else if (figure_char == 'T') {
+        superficie3D = new TuboSenoidal(2,6);
+    }
     
-    // Uso "superficie3D" como la variable a modificar segun el objeto que se quiera ver
-    //superficie3D = new Plano(10,10);
-    //superficie3D = new Esfera(3);
-    superficie3D = new TuboSenoidal(2,6);
     mallaDeTriangulos=generarSuperficie(superficie3D,filas,columnas);
     
 }
